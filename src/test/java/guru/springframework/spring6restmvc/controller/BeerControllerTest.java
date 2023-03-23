@@ -2,11 +2,16 @@ package guru.springframework.spring6restmvc.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
+
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -41,10 +46,23 @@ class BeerControllerTest {
     @BeforeEach
     void setUp() {
         beerServiceImpl = new BeerServiceImpl();
+        
     }
     
     @Test
-    void testCreateNewBeer() throws Exception{
+    void testUpdateBeer() throws Exception {
+    	Beer beer = beerServiceImpl.listBeers().get(0);
+    	
+    	mockMvc.perform(put("/api/v1/beer/" + beer.getId())
+    			.accept(MediaType.APPLICATION_JSON)
+    				.contentType(MediaType.APPLICATION_JSON)
+    				.content(objectMapper.writeValueAsString(beer)))
+    			.andExpect(status().isNoContent());
+    	verify(beerService).updateBeerById(any(UUID.class), any(Beer.class));
+    } 
+    
+    @Test
+    void testCreateNewBeer() throws Exception {
     	Beer beer = beerServiceImpl.listBeers().get(0);
     	beer.setVersion(null);
     	beer.setId(null);

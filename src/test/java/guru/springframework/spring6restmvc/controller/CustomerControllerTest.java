@@ -16,16 +16,20 @@ import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.hamcrest.core.Is.is;
 
 @WebMvcTest(CustomerController.class)
@@ -45,6 +49,18 @@ public class CustomerControllerTest {
     @BeforeEach
     void setUp() {
     	customerServiceImpl = new CustomerServiceImpl();
+    }
+    
+    @Test
+    void testUpdateCustomer() throws Exception {
+    	Customer customer = customerServiceImpl.getAllCustomers().get(0);
+    	
+    	mockMvc.perform(put("/api/v1/customer/" + customer.getId())
+    			.accept(MediaType.APPLICATION_JSON)
+    				.contentType(MediaType.APPLICATION_PROBLEM_JSON)
+    				.content(objectMapper.writeValueAsString(customer)))
+    			.andExpect(status().isNoContent());
+    	verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
     }
     
     @Test
