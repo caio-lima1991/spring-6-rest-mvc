@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import guru.springframework.spring6restmvc.model.Beer;
-import guru.springframework.spring6restmvc.model.Customer;
+import guru.springframework.spring6restmvc.model.BeerDTO;
+import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.services.BeerServiceImpl;
 import guru.springframework.spring6restmvc.services.CustomerService;
 import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
@@ -58,7 +58,7 @@ public class CustomerControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<Customer> customerArgumentCaptor;
+    ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 	
     @BeforeEach
     void setUp() {
@@ -67,7 +67,7 @@ public class CustomerControllerTest {
     
     @Test
     void testPatchCustomer() throws JsonProcessingException, Exception {
-    	Customer customer = customerServiceImpl.getAllCustomers().get(0);
+    	CustomerDTO customer = customerServiceImpl.getAllCustomers().get(0);
     	
     	Map<String, Object> customerMap = new HashMap<>();
     	customerMap.put("name", "New Name");
@@ -86,7 +86,7 @@ public class CustomerControllerTest {
     
     @Test
     void testDeleteCustomer() throws Exception {
-    	Customer customer = customerServiceImpl.getAllCustomers().get(0);
+    	CustomerDTO customer = customerServiceImpl.getAllCustomers().get(0);
     	
     	mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, customer.getId())
     			.accept(MediaType.APPLICATION_JSON))
@@ -98,23 +98,23 @@ public class CustomerControllerTest {
     
     @Test
     void testUpdateCustomer() throws Exception {
-    	Customer customer = customerServiceImpl.getAllCustomers().get(0);
+    	CustomerDTO customer = customerServiceImpl.getAllCustomers().get(0);
     	
     	mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customer.getId())
     			.accept(MediaType.APPLICATION_JSON)
     				.contentType(MediaType.APPLICATION_PROBLEM_JSON)
     				.content(objectMapper.writeValueAsString(customer)))
     			.andExpect(status().isNoContent());
-    	verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
+    	verify(customerService).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
     }
     
     @Test
     void testCreateNewCustomer() throws Exception{
-    	Customer customer = customerServiceImpl.getAllCustomers().get(0);
+    	CustomerDTO customer = customerServiceImpl.getAllCustomers().get(0);
     	customer.setVersion(null);
     	customer.setId(null);
     	
-    	given(customerService.saveNewCustomer(any(Customer.class)))
+    	given(customerService.saveNewCustomer(any(CustomerDTO.class)))
     			.willReturn(customerServiceImpl.getAllCustomers().get(1));
     	
     	mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
@@ -138,7 +138,7 @@ public class CustomerControllerTest {
 	
 	@Test
 	void tesCustomerById() throws Exception{
-		Customer testCustomer = customerServiceImpl.getAllCustomers().get(0);
+		CustomerDTO testCustomer = customerServiceImpl.getAllCustomers().get(0);
 		
 		given(customerService.getCustomerById(testCustomer.getId()))
 			.willReturn(testCustomer);
