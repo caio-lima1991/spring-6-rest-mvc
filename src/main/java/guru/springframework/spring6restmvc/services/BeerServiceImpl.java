@@ -101,11 +101,11 @@ public class BeerServiceImpl implements BeerService{
         return new ArrayList<>(beerMap.values());
     }
 
-    public BeerDTO getBeerById(UUID id) {
+    public Optional<BeerDTO> getBeerById(UUID id) {
 
         log.debug("Get Beer by Id - in service. Id: " + id.toString());
 
-        return beerMap.get(id);
+        return Optional.of(beerMap.get(id));
     }
 
     public BeerDTO saveNewBeer(BeerDTO beer) {

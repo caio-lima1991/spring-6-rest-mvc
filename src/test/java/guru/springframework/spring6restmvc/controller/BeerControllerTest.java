@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
@@ -104,7 +105,7 @@ class BeerControllerTest {
     				.content(objectMapper.writeValueAsString(beer)))
     			.andExpect(status().isNoContent());
     	verify(beerService).updateBeerById(any(UUID.class), any(BeerDTO.class));
-    } 
+    }  
     
     @Test
     void testCreateNewBeer() throws Exception {
@@ -137,7 +138,7 @@ class BeerControllerTest {
     void getBeerById() throws Exception{
     	BeerDTO testBeer = beerServiceImpl.listBeers().get(0); 
     	
-    	given(beerService.getBeerById(testBeer.getId())).willReturn(testBeer);
+    	given(beerService.getBeerById(testBeer.getId())).willReturn(Optional.of(testBeer));
     	
     	mockMvc.perform(get(BeerController.BEER_PATH_ID, testBeer.getId())
     			.accept(MediaType.APPLICATION_JSON))

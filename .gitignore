@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/java/guru/springframework/spring6restmvc/controller/BeerController.java.bak
+src/main/java/guru/springframework/spring6restmvc/services/BeerService.java.bak
