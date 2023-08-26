@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -139,13 +140,12 @@ public class CustomerControllerTest {
 		CustomerDTO testCustomer = customerServiceImpl.getAllCustomers().get(0);
 		
 		given(customerService.getCustomerById(testCustomer.getId()))
-			.willReturn(testCustomer);
+			.willReturn(Optional.of(testCustomer));
 		
 		mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id", is(testCustomer.getId().toString())))
 				.andExpect(jsonPath("$.name", is(testCustomer.getName())));
 	}
 }

@@ -1,13 +1,14 @@
 package guru.springframework.spring6restmvc.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import guru.springframework.spring6restmvc.model.CustomerDTO;
 
 public interface CustomerService {
 
-    CustomerDTO getCustomerById(UUID uuid);
+    Optional<CustomerDTO> getCustomerById(UUID uuid);
 
     List<CustomerDTO> getAllCustomers();
 

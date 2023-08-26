@@ -11,8 +11,8 @@ import guru.springframework.spring6restmvc.repositories.CustomerRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class BootstrapDataTest {
-    
+class BootstrapDataTest {
+
     @Autowired
     BeerRepository beerRepository;
 

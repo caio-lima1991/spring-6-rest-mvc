@@ -5,7 +5,6 @@ import guru.springframework.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +64,7 @@ public class BeerController {
     }
 
     @GetMapping(value = BEER_PATH_ID)
-    public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) throws NotFoundException{
+    public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
 
         log.debug("Get Beer by Id - in controller");
 
