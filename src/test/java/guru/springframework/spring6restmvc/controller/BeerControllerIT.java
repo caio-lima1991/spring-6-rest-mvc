@@ -31,7 +31,7 @@ class BeerControllerIT {
     }
 
     @Test
-    void testGetBydId(){
+    void testGetById(){
         Beer beer = beerRepository.findAll().get(0);
         BeerDTO dto = beerController.getBeerById(beer.getId()); 
         
