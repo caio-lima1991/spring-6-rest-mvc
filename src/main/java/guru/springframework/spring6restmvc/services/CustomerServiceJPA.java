@@ -3,10 +3,12 @@ package guru.springframework.spring6restmvc.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import guru.springframework.spring6restmvc.mappers.CustomerMapper;
 import guru.springframework.spring6restmvc.model.CustomerDTO;
@@ -35,26 +37,49 @@ public class CustomerServiceJPA implements CustomerService {
 
     @Override
     public CustomerDTO saveNewCustomer(CustomerDTO customer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveNewCustomer'");
+        return customerMapper.customerToCustomerDto(customerRepository
+                .save(customerMapper.customerDtoToCustomer(customer)));
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, CustomerDTO customer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCustomerById'");
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
+
+        customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
+            foundCustomer.setName(customer.getName());
+            atomicReference.set(Optional.of(customerMapper
+                    .customerToCustomerDto(customerRepository.save(foundCustomer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
 
     @Override
-    public void deleteCustomerById(UUID customerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteCustomerById'");
+    public Boolean deleteCustomerById(UUID customerId) {
+        if(customerRepository.existsById(customerId)){
+            customerRepository.deleteById(customerId);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchCustomerById(UUID customerId, CustomerDTO customer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'patchCustomerById'");
+    public Optional<CustomerDTO> patchCustomerById(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
+
+        customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
+            if (StringUtils.hasText(customer.getName())){
+                foundCustomer.setName(customer.getName());
+            }
+            atomicReference.set(Optional.of(customerMapper
+                    .customerToCustomerDto(customerRepository.save(foundCustomer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
     
 }

@@ -3,10 +3,12 @@ package guru.springframework.spring6restmvc.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import guru.springframework.spring6restmvc.mappers.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
@@ -36,26 +38,64 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public BeerDTO saveNewBeer(BeerDTO beer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveNewBeer'");
+        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
     }
 
     @Override
-    public void updateBeerById(UUID beerId, BeerDTO beer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateBeerById'");
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
+
+        beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
+            foundBeer.setBeerName(beer.getBeerName());
+            foundBeer.setBeerStyle(beer.getBeerStyle());
+            foundBeer.setUpc(beer.getUpc());
+            foundBeer.setPrice(beer.getPrice());
+            foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            atomicReference.set(Optional.of(beerMapper
+                    .beerToBeerDto(beerRepository.save(foundBeer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
 
     @Override
-    public void deleteById(UUID beerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+    public Boolean deleteById(UUID beerId) {
+        if (beerRepository.existsById(beerId)) {
+            beerRepository.deleteById(beerId);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDTO beer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'patchBeerById'");
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
+
+        beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
+            if (StringUtils.hasText(beer.getBeerName())){
+                foundBeer.setBeerName(beer.getBeerName());
+            }
+            if (beer.getBeerStyle() != null){
+                foundBeer.setBeerStyle(beer.getBeerStyle());
+            }
+            if (StringUtils.hasText(beer.getUpc())){
+                foundBeer.setUpc(beer.getUpc());
+            }
+            if (beer.getPrice() != null){
+                foundBeer.setPrice(beer.getPrice());
+            }
+            if (beer.getQuantityOnHand() != null){
+                foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            }
+            atomicReference.set(Optional.of(beerMapper
+                    .beerToBeerDto(beerRepository.save(foundBeer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
     
 }
