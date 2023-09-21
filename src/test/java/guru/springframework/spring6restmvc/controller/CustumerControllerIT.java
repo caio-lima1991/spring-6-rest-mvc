@@ -17,7 +17,7 @@ import guru.springframework.spring6restmvc.repositories.CustomerRepository;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
-public class CostumerControllerIT {
+public class CustumerControllerIT {
     
     @Autowired
     CustomerRepository customerRepository;

@@ -26,14 +26,15 @@ public class BeerServiceJPA implements BeerService {
     @Override
     public List<BeerDTO> listBeers() {
         return beerRepository.findAll()
-                             .stream()
-                             .map(beerMapper::beerToBeerDto)
-                             .collect(Collectors.toList());
+                .stream()
+                .map(beerMapper::beerToBeerDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
-        return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(id).orElse(null)));
+        return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(id)
+                .orElse(null)));
     }
 
     @Override
@@ -97,5 +98,4 @@ public class BeerServiceJPA implements BeerService {
 
         return atomicReference.get();
     }
-    
 }
